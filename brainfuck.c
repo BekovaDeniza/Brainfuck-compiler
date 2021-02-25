@@ -1,12 +1,12 @@
-#include<stdio.h>
-#include<stdlib.h>
-#define MEM_LEN 3000
+#include <stdio.h>
+#include <stdlib.h>
+#define MEM_LEN 30000
 
 void except(FILE *file, char *source, int a) {
 	free(source);
 	fclose(file);
 
-	if(a >= 0) exit(a);
+	if (a >= 0) exit(a);
 }
 
 int brainfuck(FILE *file) {
@@ -23,22 +23,22 @@ int brainfuck(FILE *file) {
 		source[a] = fgetc(file);
 	}
 	
-	while(code < source_len) {
+	while (code < source_len) {
 		char c = source[code];
 		
-		if(c=='>' && (++mem) == MEM_LEN) mem=0; //Переход к следующей ячейке
-		else if(c == '<' && !(mem--)) mem = MEM_LEN - 1; //Переход к предыдущей ячейки
-		else if(c == '.') printf("%c", memory[mem]); //Печатаем значение из ячейки
-		else if(c == ',') memory[mem] = fgetc(stdin); //Ввод значения и сохраннение в ячейке
-		else if(c == '+') ++memory[mem]; //Увеличиваем значение в ячейке на 1
-		else if(c == '-') --memory[mem]; //Уменьшаем значение в ячейке на 1
-		else if(c == '[' && !memory[mem]) {
+		if (c == '>' && (++mem) == MEM_LEN) mem=0; //Переход к следующей ячейке
+		else if (c == '<' && !(mem--)) mem = MEM_LEN - 1; //Переход к предыдущей ячейки
+		else if (c == '.') printf("%c", memory[mem]); //Печатаем значение из ячейки
+		else if (c == ',') memory[mem] = fgetc(stdin); //Ввод значения и сохраннение в ячейке
+		else if (c == '+') ++memory[mem]; //Увеличиваем значение в ячейке на 1
+		else if (c == '-') --memory[mem]; //Уменьшаем значение в ячейке на 1
+		else if (c == '[' && !memory[mem]) {
 			int open = 1; //Считаем количество открывающих скобок
 
-			while(open) {
-				if(++code == source_len) except(file, source, 0);
-				if(source[code] == '[') ++open;
-				if(source[code] == ']') --open;
+			while (open) {
+				if (++code == source_len) except(file, source, 0);
+				if (source[code] == '[') ++open;
+				if (source[code] == ']') --open;
 			}
 		}
 		else if (c == ']' && memory[mem]) {
@@ -50,8 +50,10 @@ int brainfuck(FILE *file) {
 			}
 		}
 
-		else if(!(c == '\t' || c == '\n' || c == ' ' || c == '<' || c == '>' || c == '[' || c == ']')) {
-			fprintf(stderr, "wtf is this? (%c)\n", c);
+		else if (!(c == '\t' || c == '\n' 
+			   || c == ' ' || c == '<' 
+			   || c == '>' || c == '[' || c == ']')) {
+			fprintf(stderr, "Неизвестный символ? (%c)\n", c);
 			except(file, source, 1);
 		}
 		++code;
