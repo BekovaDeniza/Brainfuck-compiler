@@ -2,28 +2,34 @@
 #include <stdlib.h>
 #define MEM_LEN 30000
 
-void except(FILE *file, char *source, int a) {
-	free(source);
+void except(FILE *file, char *array, int a) {
+	free(array);
 	fclose(file);
 
 	if (a >= 0) exit(a);
 }
 
+
 int brainfuck(FILE *file) {
 //Реализация компилятора
 	int mem = 0, i = 0;
 	char memory[MEM_LEN + 1];
-	fseek(file, 0, SEEK_END); //Устанавливаем указатель на конец файла
-	int file_len = ftell(file); //Присваиваем значение указателя
+	//Устанавливаем указатель на конец файла
+	//Присваиваем значение переменной количеству символ в файле
+	//Возвращаем указатель обратно в начало файла
+	fseek(file, 0, SEEK_END);
+	int file_len = ftell(file);
 	char *array = (char*) malloc(file_len);
-	rewind(file); //Возвращаем указатель в начало файла
+	rewind(file);
 	
 	for (int a = 0; a < file_len; ++a) {
 	//Заполнфем массив данными из файла
 		array[a] = fgetc(file);
 	}
 
-	while (code < file_len) {
+	while (i < file_len) {
+	//Проходимся по массиву и выполняем действие описанное в каждой ячейке
+
 		char c = array[i];
 
 		if (c == '>' && (++mem) == MEM_LEN) mem = 0; //Переход к следующей ячейке
@@ -36,7 +42,7 @@ int brainfuck(FILE *file) {
 			int open = 1; //Считаем количество открывающих скобок
 
 			while (open) { //Цикл продолжается пока скобка не закроется или не дойдем до конца файла
-				if (++i == file_len) except(file, source, 0); //Конец программы
+				if (++i == file_len) except(file, array, 0); //Конец программы
 				if (array[i] == '[') ++open;
 				if (array[i] == ']') --open;
 			}
@@ -46,9 +52,9 @@ int brainfuck(FILE *file) {
 			int close = 1; //Считаем количество закрывающих скобок
 			
 			while (close) {
-				if (--i == -1) except(file, source, 0); //Конец программы
-				if (source[i] == ']') ++close;
-				if (source[i] == '[') --close;
+				if (--i == -1) except(file, array, 0); //Конец программы
+				if (array[i] == ']') ++close;
+				if (array[i] == '[') --close;
 			}
 		}
 
@@ -56,14 +62,15 @@ int brainfuck(FILE *file) {
 			   || c == ' ' || c == '<' 
 			   || c == '>' || c == '[' || c == ']')) {
 			fprintf(stderr, "Неизвестный символ? (%c)\n", c);
-			except(file, source, 1);
+			except(file, array, 1);
 		}
 		++i;
 	}
 
-	except(file, source, -1);
+	except(file, array, -1);
 	return 0;
 }
+
 
 int main(int argc, char **argv) {
 	if (argc != 2) {
