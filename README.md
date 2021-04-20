@@ -1,1 +1,1 @@
-# Brainfuck-compiler
+Реализация компилятора языка brainfuck. #Учебный проект
